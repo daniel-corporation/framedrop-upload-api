@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,14 +35,4 @@ public class VideoController {
         return ResponseEntity.ok("Video status updated");
     }
 
-    @GetMapping
-    public void testMethod() {
-        VideoMetadata videoMetadata = new VideoMetadata(
-                UUID.randomUUID().toString(),
-                "user123",
-                "sample_video.mp4",
-                ".mp4"
-        );
-        adapter.pushToQueue(videoMetadata);
-    }
 }

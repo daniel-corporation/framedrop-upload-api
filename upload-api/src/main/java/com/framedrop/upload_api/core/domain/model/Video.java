@@ -23,6 +23,7 @@ public class Video {
         this.fileExtension = getFileExtensionFromFileName(fileName);
         this.dateUploaded = dateUploaded;
         this.statusProcess = statusProcess;
+        this.validate();
     }
 
     public String getVideoId() {
@@ -76,13 +77,17 @@ public class Video {
         if (videoPath == null || videoPath.isEmpty()) {
             throw new IllegalArgumentException("Video path cannot be null or empty");
         }
-        if (fileName == null || fileName.isEmpty()) {
-            throw new IllegalArgumentException("File name cannot be null or empty");
-        }
+        validateFileName();
         validateFileExtension();
         validateDateUploaded();
         validateStatusProcess();
 
+    }
+
+    private void validateFileName() {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("File name cannot be null or empty");
+        }
     }
 
     private void validateDateUploaded() {
@@ -112,6 +117,7 @@ public class Video {
     }
 
     private String getFileExtensionFromFileName(String fileName) {
+        validateFileName();
         int lastDotIndex = fileName.lastIndexOf('.');
         if (lastDotIndex == -1 || lastDotIndex == fileName.length() - 1) {
             throw new IllegalArgumentException("File name must contain an extension");
