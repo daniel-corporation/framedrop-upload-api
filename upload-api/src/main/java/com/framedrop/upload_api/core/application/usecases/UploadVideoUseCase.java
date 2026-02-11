@@ -48,7 +48,7 @@ public class UploadVideoUseCase implements UploadVideoInputPort {
                     UUID.randomUUID().toString(),
                     userDto.userId(),
                     userDto.userName(),
-                    "videos/" + userDto.userId()+ "/" + videoFile.getOriginalFilename() + "_" + System.currentTimeMillis(),
+                    "videos/" + userDto.userId()+ "/" + System.currentTimeMillis() + "_" + videoFile.getOriginalFilename(),
                     videoFile.getOriginalFilename(),
                     LocalDateTime.now(),
                     StatusProcess.PENDING);

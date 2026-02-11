@@ -5,6 +5,7 @@ import com.framedrop.upload_api.adapters.out.dynamodb.VideoDynamoAdapter;
 import com.framedrop.upload_api.core.domain.model.Video;
 import com.framedrop.upload_api.core.domain.ports.out.UploadVideoOutputPort;
 import com.framedrop.upload_api.core.domain.ports.out.ValidateVideoOutputPort;
+import com.framedrop.upload_api.core.domain.ports.out.VideoProcessQueueOutPut;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,9 @@ class UploadVideoUseCaseTest {
     @Mock
     private MultipartFile videoFile;
 
+    @Mock
+    private VideoProcessQueueOutPut videoProcessQueueOutPut;
+
     @InjectMocks
     private UploadVideoUseCase uploadVideoUseCase;
 
@@ -60,7 +64,7 @@ class UploadVideoUseCaseTest {
         assertEquals("user123", savedVideo.getUserId());
         assertEquals("John Doe", savedVideo.getUserName());
         assertEquals("video.mp4", savedVideo.getFileName());
-        assertTrue(savedVideo.getVideoPath().startsWith("videos/user123/video.mp4_"));
+        assertTrue(savedVideo.getVideoPath().startsWith("videos/user123/"));
         assertNotNull(savedVideo.getVideoId());
         assertNotNull(savedVideo.getDateUploaded());
     }
@@ -116,7 +120,7 @@ class UploadVideoUseCaseTest {
         verify(videoDynamoAdapter).save(videoCaptor.capture());
 
         Video savedVideo = videoCaptor.getValue();
-        assertTrue(savedVideo.getVideoPath().matches("videos/user123/video\\.mp4_\\d+"));
+        assertTrue(savedVideo.getVideoPath().matches("videos/user123/\\d+_video\\.mp4"));
     }
 
     @Test
@@ -143,6 +147,6 @@ class UploadVideoUseCaseTest {
         verify(uploadVideoOutputPort).uploadVideoToStorage(pathCaptor.capture(), eq(videoFile));
 
         String uploadPath = pathCaptor.getValue();
-        assertTrue(uploadPath.startsWith("videos/user123/video.mp4_"));
+        assertTrue(uploadPath.startsWith("videos/user123/"));
     }
 }
