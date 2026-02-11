@@ -6,6 +6,7 @@ import com.framedrop.upload_api.core.application.usecases.UploadVideoUseCase;
 import com.framedrop.upload_api.core.domain.ports.in.UploadVideoInputPort;
 import com.framedrop.upload_api.core.domain.ports.out.UploadVideoOutputPort;
 import com.framedrop.upload_api.core.domain.ports.out.ValidateVideoOutputPort;
+import com.framedrop.upload_api.core.domain.ports.out.VideoProcessQueueOutPut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +21,10 @@ public class UploadVideoConfig {
     @Bean
     public UploadVideoInputPort createUploadVideoInputPort(UploadVideoOutputPort uploadVideoOutputPort,
                                                            VideoDynamoAdapter videoDynamoAdapter,
-                                                           ValidateVideoOutputPort validateVideoOutputPort) {
+                                                           ValidateVideoOutputPort validateVideoOutputPort,
+                                                           VideoProcessQueueOutPut videoProcessQueueOutPut) {
 
-        return new UploadVideoUseCase(uploadVideoOutputPort, videoDynamoAdapter, validateVideoOutputPort);
+        return new UploadVideoUseCase(uploadVideoOutputPort, videoDynamoAdapter, validateVideoOutputPort, videoProcessQueueOutPut);
     }
 
     @Bean
