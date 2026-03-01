@@ -19,14 +19,18 @@ public class UploadController {
     private final TokenInputPort tokenInputPort;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadVideo(@RequestHeader("Authorization") String bearerToken, @RequestParam("videoFile") MultipartFile videoFile) {
+    public ResponseEntity<?> uploadVideo(
+            @RequestHeader("Authorization") String bearerToken,
+            @RequestPart("videoFile") MultipartFile videoFile,
+            @RequestParam("email") String email) {
 
         if (videoFile == null || videoFile.isEmpty()) {
-            return org.springframework.http.ResponseEntity.badRequest().body("No file provided");
+            return ResponseEntity.badRequest().body("No file provided");
         }
 
-        UserDTO userId = tokenInputPort.getUserFromToken(bearerToken);
-        uploadVideoInputPort.uploadVideo(videoFile,userId);
+        UserDTO user = tokenInputPort.getUserFromToken(bearerToken);
+        UserDTO userWithEmail = new UserDTO(user.userId(), user.userName(), email);
+        uploadVideoInputPort.uploadVideo(videoFile, userWithEmail);
 
         return ResponseEntity.ok("Video was sent to processing");
 

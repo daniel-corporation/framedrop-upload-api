@@ -22,6 +22,7 @@ public class VideoUseCase implements VideoInputPort {
                 v.getVideoId(),
                 v.getUserId(),
                 v.getUserName(),
+                v.getEmail(),
                 v.getVideoPath(),
                 v.getFileName(),
                 v.getFileExtension(),

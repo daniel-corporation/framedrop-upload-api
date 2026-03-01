@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record VideoDTO( String videoId,
          String userId,
          String userName,
+         String email,
          String videoPath,
          String fileName,
          String fileExtension,

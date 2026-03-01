@@ -23,6 +23,7 @@ public class VideoDynamoAdapter implements VideoOutputPort {
         return new Video(entity.getVideoId(),
                 entity.getUserId(),
                 entity.getUserName(),
+                entity.getEmail(),
                 entity.getVideoPath(),
                 entity.getFileName(),
                 entity.getDateUploaded(),
@@ -36,6 +37,7 @@ public class VideoDynamoAdapter implements VideoOutputPort {
                 dynamoEntity.getVideoId(),
                 dynamoEntity.getUserId(),
                 dynamoEntity.getUserName(),
+                dynamoEntity.getEmail(),
                 dynamoEntity.getVideoPath(),
                 dynamoEntity.getFileName(),
                 dynamoEntity.getDateUploaded(),
@@ -49,6 +51,7 @@ public class VideoDynamoAdapter implements VideoOutputPort {
         entity.setVideoId(video.getVideoId());
         entity.setUserId(video.getUserId());
         entity.setUserName(video.getUserName());
+        entity.setEmail(video.getEmail());
         entity.setVideoPath(video.getVideoPath());
         entity.setFileName(video.getFileName());
         entity.setFileExtension(video.getFileExtension());
@@ -65,6 +68,7 @@ public class VideoDynamoAdapter implements VideoOutputPort {
                 dynamoEntity.getVideoId(),
                 dynamoEntity.getUserId(),
                 dynamoEntity.getUserName(),
+                dynamoEntity.getEmail(),
                 dynamoEntity.getVideoPath(),
                 dynamoEntity.getFileName(),
                 dynamoEntity.getDateUploaded(),

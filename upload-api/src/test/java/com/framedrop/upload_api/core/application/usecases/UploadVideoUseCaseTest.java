@@ -45,7 +45,7 @@ class UploadVideoUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        userDTO = new UserDTO("user123", "John Doe");
+        userDTO = new UserDTO("user123", "John Doe", "john@example.com");
         lenient().when(videoFile.getOriginalFilename()).thenReturn("video.mp4");
     }
 

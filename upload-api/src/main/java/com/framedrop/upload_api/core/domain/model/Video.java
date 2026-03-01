@@ -8,16 +8,18 @@ public class Video {
     private String videoId;
     private String userId;
     private String userName;
+    private String email;
     private String videoPath;
     private String fileName;
     private String fileExtension;
     private LocalDateTime dateUploaded;
     private StatusProcess statusProcess;
 
-    public Video(String videoId, String userId, String userName, String videoPath, String fileName, LocalDateTime dateUploaded, StatusProcess statusProcess) {
+    public Video(String videoId, String userId, String userName, String email, String videoPath, String fileName, LocalDateTime dateUploaded, StatusProcess statusProcess) {
         this.videoId = videoId;
         this.userId = userId;
         this.userName = userName;
+        this.email = email;
         this.videoPath = videoPath;
         this.fileName = fileName;
         this.fileExtension = getFileExtensionFromFileName(fileName);
@@ -57,6 +59,10 @@ public class Video {
         return userName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setStatusProcess(StatusProcess statusProcess) {
         this.statusProcess = statusProcess;
         validateStatusProcess();
@@ -71,9 +77,10 @@ public class Video {
             throw new IllegalArgumentException("User ID cannot be null or empty");
         }
 
-        if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("User ID cannot be null or empty");
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
         }
+
         if (videoPath == null || videoPath.isEmpty()) {
             throw new IllegalArgumentException("Video path cannot be null or empty");
         }

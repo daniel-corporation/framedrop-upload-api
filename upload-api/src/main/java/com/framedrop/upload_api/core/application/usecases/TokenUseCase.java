@@ -20,6 +20,7 @@ public class TokenUseCase implements TokenInputPort {
         Map<String, Claim> claims = JWT.decode(token).getClaims();
         return new UserDTO(
                 claims.get("client_id").asString(),
-                claims.get("sub").asString());
+                claims.get("sub").asString(),
+                null);
     }
 }

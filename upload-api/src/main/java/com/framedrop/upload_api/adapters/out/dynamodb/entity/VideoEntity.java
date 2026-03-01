@@ -15,6 +15,7 @@ public class VideoEntity {
     private String videoId;
     private String userId;
     private String userName;
+    private String email;
     private String videoPath;
     private String fileName;
     private String fileExtension;
@@ -46,6 +47,14 @@ public class VideoEntity {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getVideoPath() {
