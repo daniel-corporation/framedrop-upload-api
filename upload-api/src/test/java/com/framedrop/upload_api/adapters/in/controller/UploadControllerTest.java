@@ -116,4 +116,67 @@ class UploadControllerTest {
         verify(uploadVideoInputPort).uploadVideo(eq(multipartFile), userCaptor.capture());
         assertEquals("jane@example.com", userCaptor.getValue().email());
     }
+
+    @Test
+    void shouldUseEmailFromRequestPartInsteadOfToken() {
+        String tokenEmail = "token@example.com";
+        String requestPartEmail = "requestpart@example.com";
+        UserDTO userFromToken = new UserDTO("user123", "John Doe", tokenEmail);
+
+        when(multipartFile.isEmpty()).thenReturn(false);
+        when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userFromToken);
+
+        uploadController.uploadVideo(BEARER_TOKEN, multipartFile, requestPartEmail);
+
+        ArgumentCaptor<UserDTO> userCaptor = ArgumentCaptor.forClass(UserDTO.class);
+        verify(uploadVideoInputPort).uploadVideo(eq(multipartFile), userCaptor.capture());
+
+        UserDTO captured = userCaptor.getValue();
+        assertEquals(requestPartEmail, captured.email());
+        assertNotEquals(tokenEmail, captured.email());
+    }
+
+    @Test
+    void shouldPassNullEmailWhenRequestPartEmailIsNull() {
+        when(multipartFile.isEmpty()).thenReturn(false);
+        when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userDTO);
+
+        uploadController.uploadVideo(BEARER_TOKEN, multipartFile, null);
+
+        ArgumentCaptor<UserDTO> userCaptor = ArgumentCaptor.forClass(UserDTO.class);
+        verify(uploadVideoInputPort).uploadVideo(eq(multipartFile), userCaptor.capture());
+
+        assertNull(userCaptor.getValue().email());
+    }
+
+    @Test
+    void shouldPassEmptyEmailWhenRequestPartEmailIsEmpty() {
+        when(multipartFile.isEmpty()).thenReturn(false);
+        when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userDTO);
+
+        uploadController.uploadVideo(BEARER_TOKEN, multipartFile, "");
+
+        ArgumentCaptor<UserDTO> userCaptor = ArgumentCaptor.forClass(UserDTO.class);
+        verify(uploadVideoInputPort).uploadVideo(eq(multipartFile), userCaptor.capture());
+
+        assertEquals("", userCaptor.getValue().email());
+    }
+
+    @Test
+    void shouldPreserveUserIdAndUserNameFromTokenWhileUsingEmailFromRequestPart() {
+        UserDTO userFromToken = new UserDTO("originalId", "Original Name", "original@example.com");
+
+        when(multipartFile.isEmpty()).thenReturn(false);
+        when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userFromToken);
+
+        uploadController.uploadVideo(BEARER_TOKEN, multipartFile, "new@example.com");
+
+        ArgumentCaptor<UserDTO> userCaptor = ArgumentCaptor.forClass(UserDTO.class);
+        verify(uploadVideoInputPort).uploadVideo(eq(multipartFile), userCaptor.capture());
+
+        UserDTO captured = userCaptor.getValue();
+        assertEquals("originalId", captured.userId());
+        assertEquals("Original Name", captured.userName());
+        assertEquals("new@example.com", captured.email());
+    }
 }

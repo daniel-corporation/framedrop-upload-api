@@ -3,6 +3,7 @@ package com.framedrop.upload_api.adapters.in.controller;
 import com.framedrop.upload_api.adapters.in.controller.dto.UserDTO;
 import com.framedrop.upload_api.core.domain.ports.in.TokenInputPort;
 import com.framedrop.upload_api.core.domain.ports.in.UploadVideoInputPort;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class UploadController {
     public ResponseEntity<?> uploadVideo(
             @RequestHeader("Authorization") String bearerToken,
             @RequestPart("videoFile") MultipartFile videoFile,
-            @RequestParam("email") String email) {
+            @Email @RequestPart("email") String email) {
 
         if (videoFile == null || videoFile.isEmpty()) {
             return ResponseEntity.badRequest().body("No file provided");
