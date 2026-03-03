@@ -34,8 +34,8 @@ class VideoUseCaseTest {
     @BeforeEach
     void setUp() {
         LocalDateTime now = LocalDateTime.now().minusDays(1);
-        video1 = new Video("video1", "user123", "John Doe", "/videos/video1.mp4", "video1.mp4", now, StatusProcess.PENDING);
-        video2 = new Video("video2", "user123", "John Doe", "/videos/video2.mkv", "video2.mkv", now, StatusProcess.COMPLETED);
+        video1 = new Video("video1", "user123", "John Doe", "john@example.com", "/videos/video1.mp4", "video1.mp4", now, StatusProcess.PENDING);
+        video2 = new Video("video2", "user123", "John Doe", "john@example.com", "/videos/video2.mkv", "video2.mkv", now, StatusProcess.COMPLETED);
     }
 
     @Test

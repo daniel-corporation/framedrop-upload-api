@@ -37,13 +37,14 @@ class VideoDynamoAdapterTest {
         videoEntity.setVideoId("video123");
         videoEntity.setUserId("user123");
         videoEntity.setUserName("John Doe");
+        videoEntity.setEmail("john@example.com");
         videoEntity.setVideoPath("videos/user123/video.mp4");
         videoEntity.setFileName("video.mp4");
         videoEntity.setFileExtension("mp4");
         videoEntity.setDateUploaded(LocalDateTime.now());
         videoEntity.setStatusProcess(StatusProcess.PROCESSING);
 
-        video = new Video("video123", "user123", "John Doe",
+        video = new Video("video123", "user123", "John Doe", "john@example.com",
                 "videos/user123/video.mp4", "video.mp4", LocalDateTime.now(), StatusProcess.PROCESSING);
     }
 
@@ -69,6 +70,7 @@ class VideoDynamoAdapterTest {
         entity2.setVideoId("video456");
         entity2.setUserId("user123");
         entity2.setUserName("John Doe");
+        entity2.setEmail("john@example.com");
         entity2.setVideoPath("videos/user123/video2.mp4");
         entity2.setFileName("video2.mp4");
         entity2.setDateUploaded(LocalDateTime.now());
@@ -130,6 +132,7 @@ class VideoDynamoAdapterTest {
         entity2.setVideoId("video789");
         entity2.setUserId("user456");
         entity2.setUserName("Jane Smith");
+        entity2.setEmail("jane@example.com");
         entity2.setVideoPath("videos/user456/video.avi");
         entity2.setFileName("video.avi");
         entity2.setDateUploaded( LocalDateTime.now());
@@ -146,7 +149,7 @@ class VideoDynamoAdapterTest {
 
     @Test
     void shouldMapAllFieldsCorrectlyWhenSaving() {
-        Video videoWithExtension = new Video("video999", "user999", "Test User",
+        Video videoWithExtension = new Video("video999", "user999", "Test User", "test@example.com",
                 "path/to/video.webm", "test.webm",LocalDateTime.now(), StatusProcess.COMPLETED);
 
         videoDynamoAdapter.save(videoWithExtension);

@@ -38,7 +38,8 @@ class SqsVideoQueueAdapterTest {
 
     @Test
     void shouldPushVideoMetadataToQueueSuccessfully(){
-        VideoMetadata videoMetadata = new VideoMetadata("user123", "videos/user123/video.mp4","","");
+        VideoMetadata videoMetadata = new VideoMetadata("user123", "userId123", "user@test.com", "videos/user123/video.mp4","");
+
         String jsonMessage = "{\"userId\":\"user123\",\"videoPath\":\"videos/user123/video.mp4\"}";
 
         when(objectMapper.writeValueAsString(videoMetadata)).thenReturn(jsonMessage);
@@ -53,7 +54,7 @@ class SqsVideoQueueAdapterTest {
 
     @Test
     void shouldSendMessageWithCorrectParameters(){
-        VideoMetadata videoMetadata = new VideoMetadata("user456", "videos/user456/video.mp4","","");
+        VideoMetadata videoMetadata = new VideoMetadata("user456", "userId456", "user@test.com", "videos/user456/video.mp4","");
         String jsonMessage = "{\"userId\":\"user456\",\"videoPath\":\"videos/user456/video.mp4\"}";
 
         when(objectMapper.writeValueAsString(videoMetadata)).thenReturn(jsonMessage);
@@ -75,7 +76,7 @@ class SqsVideoQueueAdapterTest {
 
     @Test
     void shouldThrowExceptionWhenSqsClientFails(){
-        VideoMetadata videoMetadata = new VideoMetadata("user123", "videos/user123/video.mp4","","");
+        VideoMetadata videoMetadata = new VideoMetadata("user123", "userId123", "user@test.com", "videos/user123/video.mp4","");
         String jsonMessage = "{\"userId\":\"user123\",\"videoPath\":\"videos/user123/video.mp4\"}";
 
         when(objectMapper.writeValueAsString(videoMetadata)).thenReturn(jsonMessage);
@@ -92,7 +93,7 @@ class SqsVideoQueueAdapterTest {
 
     @Test
     void shouldHandleDifferentVideoMetadata(){
-        VideoMetadata videoMetadata = new VideoMetadata("user789", "custom/path/video.avi","","");
+        VideoMetadata videoMetadata = new VideoMetadata("user789", "userId789", "user@test.com", "custom/path/video.avi","");
         String jsonMessage = "{\"userId\":\"user789\",\"videoPath\":\"custom/path/video.avi\"}";
 
         when(objectMapper.writeValueAsString(videoMetadata)).thenReturn(jsonMessage);
@@ -109,7 +110,7 @@ class SqsVideoQueueAdapterTest {
 
     @Test
     void shouldSetDelaySecondsToZero(){
-        VideoMetadata videoMetadata = new VideoMetadata("user123", "videos/user123/video.mp4","","");
+        VideoMetadata videoMetadata = new VideoMetadata("user123", "userId123", "user@test.com", "videos/user123/video.mp4","");
         String jsonMessage = "{}";
 
         when(objectMapper.writeValueAsString(videoMetadata)).thenReturn(jsonMessage);

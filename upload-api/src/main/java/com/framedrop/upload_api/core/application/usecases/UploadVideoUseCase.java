@@ -48,7 +48,8 @@ public class UploadVideoUseCase implements UploadVideoInputPort {
                     UUID.randomUUID().toString(),
                     userDto.userId(),
                     userDto.userName(),
-                    "videos/" + userDto.userId()+ "/" + videoFile.getOriginalFilename() + "_" + System.currentTimeMillis(),
+                    userDto.email(),
+                    "videos/" + userDto.userId()+ "/" + System.currentTimeMillis() + "_" + videoFile.getOriginalFilename(),
                     videoFile.getOriginalFilename(),
                     LocalDateTime.now(),
                     StatusProcess.PENDING);
@@ -59,6 +60,7 @@ public class UploadVideoUseCase implements UploadVideoInputPort {
             videoProcessQueueOutPut.pushToQueue(
                     new VideoMetadata(newVideo.getVideoId(),
                             newVideo.getUserId(),
+                            newVideo.getEmail(),
                             newVideo.getVideoPath(),
                             newVideo.getStatusProcess().toString()));
         } catch (Exception e) {
