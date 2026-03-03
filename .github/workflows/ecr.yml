@@ -32,10 +32,10 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
-      - name: Create ECR repository if not exists
-        run: |
-          aws ecr describe-repositories --repository-names framedrop-upload-app \
-            || aws ecr create-repository --repository-name framedrop-upload-app
+      #- name: Create ECR repository if not exists
+       # run: |
+        #  aws ecr describe-repositories --repository-names framedrop-upload-app \
+         #   || aws ecr create-repository --repository-name framedrop-upload-app
 
       - name: Log in to Amazon ECR
         id: login-ecr
