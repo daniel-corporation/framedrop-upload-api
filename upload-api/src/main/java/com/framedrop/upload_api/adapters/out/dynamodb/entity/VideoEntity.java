@@ -21,6 +21,7 @@ public class VideoEntity {
     private String fileExtension;
     private LocalDateTime dateUploaded;
     private StatusProcess statusProcess;
+    private String urlPreSigned;
 
 
     @DynamoDbPartitionKey
@@ -95,5 +96,13 @@ public class VideoEntity {
 
     public void setStatusProcess(StatusProcess statusProcess) {
         this.statusProcess = statusProcess;
+    }
+
+    public String getUrlPreSigned() {
+        return urlPreSigned;
+    }
+
+    public void setUrlPreSigned(String urlPreSigned) {
+        this.urlPreSigned = urlPreSigned;
     }
 }

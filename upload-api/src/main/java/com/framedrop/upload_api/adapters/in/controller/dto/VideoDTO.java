@@ -12,5 +12,6 @@ public record VideoDTO( String videoId,
          String fileName,
          String fileExtension,
          LocalDateTime dateUploaded,
-         StatusProcess statusProcess) {
+         StatusProcess statusProcess,
+         String urlPreSigned) {
 }

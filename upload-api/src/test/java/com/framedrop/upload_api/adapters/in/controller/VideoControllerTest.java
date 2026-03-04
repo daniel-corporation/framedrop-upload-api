@@ -40,9 +40,9 @@ class VideoControllerTest {
         videoController = new VideoController(videoInputPort, sqsVideoQueueAdapter);
 
         videoDTO1 = new VideoDTO("video123", "user123", "John Doe", "john@example.com",
-                "videos/user123/video1.mp4", "video1.mp4", "mp4", LocalDateTime.of(2026,02,8,1,1,1),StatusProcess.COMPLETED);
+                "videos/user123/video1.mp4", "video1.mp4", "mp4", LocalDateTime.of(2026,02,8,1,1,1),StatusProcess.COMPLETED, "https://s3.amazonaws.com/presigned-url-1");
         videoDTO2 = new VideoDTO("video456", "user123", "John Doe", "john@example.com",
-                "videos/user123/video2.mp4", "video2.mp4", "mp4", LocalDateTime.of(2026,02,8,1,1,1), StatusProcess.PROCESSING);
+                "videos/user123/video2.mp4", "video2.mp4", "mp4", LocalDateTime.of(2026,02,8,1,1,1), StatusProcess.PROCESSING, null);
     }
 
     @Test

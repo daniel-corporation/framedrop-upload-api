@@ -14,6 +14,7 @@ public class Video {
     private String fileExtension;
     private LocalDateTime dateUploaded;
     private StatusProcess statusProcess;
+    private String urlPreSigned;
 
     public Video(String videoId, String userId, String userName, String email, String videoPath, String fileName, LocalDateTime dateUploaded, StatusProcess statusProcess) {
         this.videoId = videoId;
@@ -61,6 +62,14 @@ public class Video {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getUrlPreSigned() {
+        return urlPreSigned;
+    }
+
+    public void setUrlPreSigned(String urlPreSigned) {
+        this.urlPreSigned = urlPreSigned;
     }
 
     public void setStatusProcess(StatusProcess statusProcess) {

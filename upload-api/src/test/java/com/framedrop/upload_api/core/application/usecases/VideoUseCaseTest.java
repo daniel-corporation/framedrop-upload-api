@@ -3,11 +3,11 @@ package com.framedrop.upload_api.core.application.usecases;
 import com.framedrop.upload_api.adapters.in.controller.dto.VideoDTO;
 import com.framedrop.upload_api.core.domain.model.Video;
 import com.framedrop.upload_api.core.domain.model.enums.StatusProcess;
+import com.framedrop.upload_api.core.domain.ports.out.PreSignedUrlOutputPort;
 import com.framedrop.upload_api.core.domain.ports.out.VideoOutputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,7 +25,9 @@ class VideoUseCaseTest {
     @Mock
     private VideoOutputPort videoOutputPort;
 
-    @InjectMocks
+    @Mock
+    private PreSignedUrlOutputPort preSignedUrlOutputPort;
+
     private VideoUseCase videoUseCase;
 
     private Video video1;
@@ -33,9 +35,10 @@ class VideoUseCaseTest {
 
     @BeforeEach
     void setUp() {
+        videoUseCase = new VideoUseCase(videoOutputPort, preSignedUrlOutputPort);
         LocalDateTime now = LocalDateTime.now().minusDays(1);
-        video1 = new Video("video1", "user123", "John Doe", "john@example.com", "/videos/video1.mp4", "video1.mp4", now, StatusProcess.PENDING);
-        video2 = new Video("video2", "user123", "John Doe", "john@example.com", "/videos/video2.mkv", "video2.mkv", now, StatusProcess.COMPLETED);
+        video1 = new Video("video1", "user123", "John Doe", "john@example.com", "videos/user123/1772584537277_video1.mp4", "video1.mp4", now, StatusProcess.PENDING);
+        video2 = new Video("video2", "user123", "John Doe", "john@example.com", "videos/user123/1772584537277_video2.mkv", "video2.mkv", now, StatusProcess.COMPLETED);
     }
 
     @Test
@@ -67,20 +70,25 @@ class VideoUseCaseTest {
     }
 
     @Test
-    void shouldUpdateVideoStatus() {
+    void shouldUpdateVideoStatusToCompletedAndGeneratePreSignedUrl() {
         String videoId = "video1";
         String newStatus = "COMPLETED";
+        String expectedUrl = "https://s3.amazonaws.com/bucket/presigned-url";
+        String expectedZipPath = "processed/user123/video1_1772584537277_video1_frames.zip";
         when(videoOutputPort.getVideoById(videoId)).thenReturn(video1);
+        when(preSignedUrlOutputPort.generatePreSignedUrl(expectedZipPath)).thenReturn(expectedUrl);
 
         videoUseCase.updateVideoStatus(videoId, newStatus);
 
         assertEquals(StatusProcess.COMPLETED, video1.getStatusProcess());
+        assertEquals(expectedUrl, video1.getUrlPreSigned());
         verify(videoOutputPort, times(1)).getVideoById(videoId);
+        verify(preSignedUrlOutputPort, times(1)).generatePreSignedUrl(expectedZipPath);
         verify(videoOutputPort, times(1)).save(video1);
     }
 
     @Test
-    void shouldUpdateVideoStatusToPending() {
+    void shouldUpdateVideoStatusToPendingWithoutGeneratingPreSignedUrl() {
         String videoId = "video2";
         String newStatus = "PENDING";
         when(videoOutputPort.getVideoById(videoId)).thenReturn(video2);
@@ -88,8 +96,10 @@ class VideoUseCaseTest {
         videoUseCase.updateVideoStatus(videoId, newStatus);
 
         assertEquals(StatusProcess.PENDING, video2.getStatusProcess());
+        assertNull(video2.getUrlPreSigned());
         verify(videoOutputPort, times(1)).getVideoById(videoId);
         verify(videoOutputPort, times(1)).save(video2);
+        verify(preSignedUrlOutputPort, never()).generatePreSignedUrl(any());
     }
 
     @Test
@@ -122,5 +132,6 @@ class VideoUseCaseTest {
         assertEquals(video1.getFileExtension(), dto.fileExtension());
         assertEquals(video1.getDateUploaded(), dto.dateUploaded());
         assertEquals(video1.getStatusProcess(), dto.statusProcess());
+        assertEquals(video1.getUrlPreSigned(), dto.urlPreSigned());
     }
 }

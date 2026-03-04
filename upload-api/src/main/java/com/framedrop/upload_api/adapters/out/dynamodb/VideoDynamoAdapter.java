@@ -57,6 +57,7 @@ public class VideoDynamoAdapter implements VideoOutputPort {
         entity.setFileExtension(video.getFileExtension());
         entity.setDateUploaded(video.getDateUploaded());
         entity.setStatusProcess(video.getStatusProcess());
+        entity.setUrlPreSigned(video.getUrlPreSigned());
 
         repository.save(entity);
 
