@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/api/uploads")
@@ -29,9 +31,17 @@ public class UploadController {
             return ResponseEntity.badRequest().body("No file provided");
         }
 
-        UserDTO user = tokenInputPort.getUserFromToken(bearerToken);
-        UserDTO userWithEmail = new UserDTO(user.userId(), user.userName(), email);
-        uploadVideoInputPort.uploadVideo(videoFile, userWithEmail);
+        try {
+            UserDTO user = tokenInputPort.getUserFromToken(bearerToken);
+            UserDTO userWithEmail = new UserDTO(user.userId(), user.userName(), email);
+            uploadVideoInputPort.uploadVideo(videoFile, userWithEmail);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid video format");
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An error occurred while processing the video");
+        }
+
 
         return ResponseEntity.ok("Video was sent to processing");
 
