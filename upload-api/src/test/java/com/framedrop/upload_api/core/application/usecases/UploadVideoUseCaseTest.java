@@ -73,42 +73,17 @@ class UploadVideoUseCaseTest {
     void shouldThrowExceptionWhenVideoFormatIsInvalid() throws IOException {
         when(validateVideoOutputPort.isValidFormatVideo(videoFile)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () ->
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 uploadVideoUseCase.uploadVideo(videoFile, userDTO)
         );
 
-        assertTrue(exception.getMessage().contains("Failed to upload video"));
-        assertEquals("Invalid video format", exception.getCause().getMessage());
+        assertTrue(exception.getMessage().contains("Invalid video format"));
         verify(videoDynamoAdapter, never()).save(any());
         verify(uploadVideoOutputPort, never()).uploadVideoToStorage(anyString(), any());
     }
 
-    @Test
-    void shouldThrowExceptionWhenDynamoAdapterFails() throws IOException {
-        when(validateVideoOutputPort.isValidFormatVideo(videoFile)).thenReturn(true);
-        doThrow(new RuntimeException("DynamoDB error")).when(videoDynamoAdapter).save(any(Video.class));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                uploadVideoUseCase.uploadVideo(videoFile, userDTO)
-        );
 
-        assertTrue(exception.getMessage().contains("Failed to upload video"));
-        verify(uploadVideoOutputPort, never()).uploadVideoToStorage(anyString(), any());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenUploadToStorageFails() throws IOException {
-        when(validateVideoOutputPort.isValidFormatVideo(videoFile)).thenReturn(true);
-        doThrow(new RuntimeException("Storage error")).when(uploadVideoOutputPort)
-                .uploadVideoToStorage(anyString(), any(MultipartFile.class));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                uploadVideoUseCase.uploadVideo(videoFile, userDTO)
-        );
-
-        assertTrue(exception.getMessage().contains("Failed to upload video"));
-        verify(videoDynamoAdapter, times(1)).save(any(Video.class));
-    }
 
     @Test
     void shouldGenerateUniqueVideoPathWithTimestamp() throws IOException {

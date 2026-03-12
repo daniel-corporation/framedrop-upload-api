@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +43,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldUploadVideoSuccessfully() {
+    void shouldUploadVideoSuccessfully() throws IOException {
         when(multipartFile.isEmpty()).thenReturn(false);
         when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userDTO);
 
@@ -54,7 +56,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestWhenFileIsNull() {
+    void shouldReturnBadRequestWhenFileIsNull() throws IOException {
         ResponseEntity<?> response = uploadController.uploadVideo(BEARER_TOKEN, null, EMAIL);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -64,7 +66,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestWhenFileIsEmpty() {
+    void shouldReturnBadRequestWhenFileIsEmpty() throws IOException {
         when(multipartFile.isEmpty()).thenReturn(true);
 
         ResponseEntity<?> response = uploadController.uploadVideo(BEARER_TOKEN, multipartFile, EMAIL);
@@ -86,7 +88,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldCallUploadVideoWithEmailFromRequest() {
+    void shouldCallUploadVideoWithEmailFromRequest() throws IOException {
         when(multipartFile.isEmpty()).thenReturn(false);
         when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userDTO);
 
@@ -102,7 +104,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldHandleDifferentBearerTokens() {
+    void shouldHandleDifferentBearerTokens() throws IOException {
         String differentToken = "Bearer different.token.here";
         UserDTO differentUser = new UserDTO("user456", "Jane Doe", null);
 
@@ -118,7 +120,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldUseEmailFromRequestPartInsteadOfToken() {
+    void shouldUseEmailFromRequestPartInsteadOfToken() throws IOException {
         String tokenEmail = "token@example.com";
         String requestPartEmail = "requestpart@example.com";
         UserDTO userFromToken = new UserDTO("user123", "John Doe", tokenEmail);
@@ -137,7 +139,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldPassNullEmailWhenRequestPartEmailIsNull() {
+    void shouldPassNullEmailWhenRequestPartEmailIsNull() throws IOException {
         when(multipartFile.isEmpty()).thenReturn(false);
         when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userDTO);
 
@@ -150,7 +152,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldPassEmptyEmailWhenRequestPartEmailIsEmpty() {
+    void shouldPassEmptyEmailWhenRequestPartEmailIsEmpty() throws IOException {
         when(multipartFile.isEmpty()).thenReturn(false);
         when(tokenInputPort.getUserFromToken(BEARER_TOKEN)).thenReturn(userDTO);
 
@@ -163,7 +165,7 @@ class UploadControllerTest {
     }
 
     @Test
-    void shouldPreserveUserIdAndUserNameFromTokenWhileUsingEmailFromRequestPart() {
+    void shouldPreserveUserIdAndUserNameFromTokenWhileUsingEmailFromRequestPart() throws IOException {
         UserDTO userFromToken = new UserDTO("originalId", "Original Name", "original@example.com");
 
         when(multipartFile.isEmpty()).thenReturn(false);

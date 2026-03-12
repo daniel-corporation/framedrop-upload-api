@@ -11,6 +11,7 @@ import com.framedrop.upload_api.core.domain.ports.out.ValidateVideoOutputPort;
 import com.framedrop.upload_api.core.domain.ports.out.VideoProcessQueueOutPut;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,8 +38,7 @@ public class UploadVideoUseCase implements UploadVideoInputPort {
     }
 
     @Override
-    public void uploadVideo(MultipartFile videoFile, UserDTO userDto) {
-        try {
+    public void uploadVideo(MultipartFile videoFile, UserDTO userDto) throws IOException,IllegalArgumentException {
 
             if(!validateVideoOutputPort.isValidFormatVideo(videoFile)){
                 throw new IllegalArgumentException("Invalid video format");
@@ -63,8 +63,5 @@ public class UploadVideoUseCase implements UploadVideoInputPort {
                             newVideo.getEmail(),
                             newVideo.getVideoPath(),
                             newVideo.getStatusProcess().toString()));
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload video", e);
-        }
     }
 }
