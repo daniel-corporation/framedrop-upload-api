@@ -1,7 +1,9 @@
 package com.framedrop.upload_api.core.domain.ports.in;
 
+import com.framedrop.upload_api.adapters.in.controller.dto.UserDTO;
+
 public interface TokenInputPort {
 
-    String getUserIdFromToken(String token);
+    UserDTO getUserFromToken(String token);
 
 }

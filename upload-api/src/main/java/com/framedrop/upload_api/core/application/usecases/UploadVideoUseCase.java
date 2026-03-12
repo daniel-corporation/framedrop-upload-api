@@ -1,25 +1,67 @@
 package com.framedrop.upload_api.core.application.usecases;
 
+import com.framedrop.upload_api.adapters.in.controller.dto.UserDTO;
+import com.framedrop.upload_api.adapters.out.dto.VideoMetadata;
+import com.framedrop.upload_api.adapters.out.dynamodb.VideoDynamoAdapter;
+import com.framedrop.upload_api.core.domain.model.Video;
+import com.framedrop.upload_api.core.domain.model.enums.StatusProcess;
 import com.framedrop.upload_api.core.domain.ports.in.UploadVideoInputPort;
 import com.framedrop.upload_api.core.domain.ports.out.UploadVideoOutputPort;
+import com.framedrop.upload_api.core.domain.ports.out.ValidateVideoOutputPort;
+import com.framedrop.upload_api.core.domain.ports.out.VideoProcessQueueOutPut;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 public class UploadVideoUseCase implements UploadVideoInputPort {
 
     private final UploadVideoOutputPort uploadVideoOutputPort;
 
+    private final VideoDynamoAdapter videoDynamoAdapter;
 
-    public UploadVideoUseCase(UploadVideoOutputPort uploadVideoOutputPort) {
+    private final ValidateVideoOutputPort validateVideoOutputPort;
+
+    private final VideoProcessQueueOutPut videoProcessQueueOutPut;
+
+    public UploadVideoUseCase(UploadVideoOutputPort uploadVideoOutputPort,
+                              VideoDynamoAdapter videoDynamoAdapter,
+                              ValidateVideoOutputPort validateVideoOutputPort,
+                              VideoProcessQueueOutPut videoProcessQueueOutPut) {
+
         this.uploadVideoOutputPort = uploadVideoOutputPort;
+        this.videoDynamoAdapter = videoDynamoAdapter;
+        this.validateVideoOutputPort = validateVideoOutputPort;
+        this.videoProcessQueueOutPut = videoProcessQueueOutPut;
     }
 
     @Override
-    public String uploadVideo(MultipartFile videoFile, String userId) {
-        try {
-            return uploadVideoOutputPort.uploadVideoToStorage(userId, videoFile);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload video", e);
-        }
+    public void uploadVideo(MultipartFile videoFile, UserDTO userDto) throws IOException,IllegalArgumentException {
+
+            if(!validateVideoOutputPort.isValidFormatVideo(videoFile)){
+                throw new IllegalArgumentException("Invalid video format");
+            }
+
+            Video newVideo = new Video(
+                    UUID.randomUUID().toString(),
+                    userDto.userId(),
+                    userDto.userName(),
+                    userDto.email(),
+                    "videos/" + userDto.userId()+ "/" + System.currentTimeMillis() + "_" + videoFile.getOriginalFilename(),
+                    videoFile.getOriginalFilename(),
+                    LocalDateTime.now(),
+                    StatusProcess.PENDING);
+
+            videoDynamoAdapter.save(newVideo);
+            uploadVideoOutputPort.uploadVideoToStorage(newVideo.getVideoPath(), videoFile);
+
+            videoProcessQueueOutPut.pushToQueue(
+                    new VideoMetadata(newVideo.getVideoId(),
+                            newVideo.getUserId(),
+                            newVideo.getEmail(),
+                            newVideo.getVideoPath(),
+                            newVideo.getStatusProcess().toString()));
     }
 }

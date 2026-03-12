@@ -1,7 +1,9 @@
 package com.framedrop.upload_api.adapters.in.controller;
 
+import com.framedrop.upload_api.adapters.in.controller.dto.UserDTO;
 import com.framedrop.upload_api.core.domain.ports.in.TokenInputPort;
 import com.framedrop.upload_api.core.domain.ports.in.UploadVideoInputPort;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,12 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/api/uploads")
 @RequiredArgsConstructor
 public class UploadController {
 
@@ -22,26 +22,28 @@ public class UploadController {
     private final TokenInputPort tokenInputPort;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadVideo(@RequestHeader("Authorization") String bearerToken, @RequestParam("videoFile") MultipartFile videoFile) {
+    public ResponseEntity<?> uploadVideo(
+            @RequestHeader("Authorization") String bearerToken,
+            @RequestPart("videoFile") MultipartFile videoFile,
+            @Email @RequestPart("email") String email) {
+
         if (videoFile == null || videoFile.isEmpty()) {
-            return org.springframework.http.ResponseEntity.badRequest().body("No file provided");
-        }
-
-        String userId = tokenInputPort.getUserIdFromToken(bearerToken);
-        uploadVideoInputPort.uploadVideo(videoFile,userId);
-
-        String contentType = videoFile.getContentType();
-        if (contentType == null || !contentType.startsWith("video/")) {
-            return org.springframework.http.ResponseEntity.badRequest().body("Invalid file type");
+            return ResponseEntity.badRequest().body("No file provided");
         }
 
         try {
-            Path uploadDir = Files.createTempDirectory("uploads");
-            Path target = uploadDir.resolve(videoFile.getOriginalFilename());
-            Files.copy(videoFile.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-            return org.springframework.http.ResponseEntity.ok("File uploaded to: " + target.toString());
-        } catch (IOException e) {
-            return org.springframework.http.ResponseEntity.status(500).body("Failed to save file");
+            UserDTO user = tokenInputPort.getUserFromToken(bearerToken);
+            UserDTO userWithEmail = new UserDTO(user.userId(), user.userName(), email);
+            uploadVideoInputPort.uploadVideo(videoFile, userWithEmail);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid video format");
         }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An error occurred while processing the video");
+        }
+
+
+        return ResponseEntity.ok("Video was sent to processing");
+
     }
 }

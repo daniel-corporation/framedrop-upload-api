@@ -4,6 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-public interface UploadVideoOutputPort {
-    void uploadVideoToStorage(String videoFilePath, MultipartFile videoFile) throws IOException;
+public interface ValidateVideoOutputPort {
+    boolean isValidFormatVideo(MultipartFile file) throws IOException;
 }
